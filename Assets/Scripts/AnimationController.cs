@@ -18,7 +18,8 @@ public class AnimationController : MonoBehaviour
     {
         Idle = 0,
         Run = 1,
-        Slash = 2
+        Attack = 2,
+        Death = 3
     }
 
     //default methods
@@ -47,13 +48,13 @@ public class AnimationController : MonoBehaviour
         move.x = Input.GetAxisRaw("Horizontal");
         move.y = Input.GetAxisRaw("Vertical");
         float mouseDifferenceX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x - transform.position.x;
-        
-        if(mouseDifferenceX > 0)
+
+        if (mouseDifferenceX > 0)
         {
             sprite.transform.localScale = new Vector3(1, 1, 1);
             slash.transform.localScale = new Vector3(-1.5f, 1.5f, 1);
         }
-        else if(mouseDifferenceX < 0)
+        else if (mouseDifferenceX < 0)
         {
             sprite.transform.localScale = new Vector3(-1, 1, 1);
             slash.transform.localScale = new Vector3(-1.5f, -1.5f, 1);
@@ -73,6 +74,5 @@ public class AnimationController : MonoBehaviour
 
         anim.SetBool("turn", turn);
         anim.SetInteger("state", (int)currentState);
-
     }
 }

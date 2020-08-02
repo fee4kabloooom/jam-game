@@ -5,53 +5,103 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] GameObject bullet;
-    [SerializeField] GameObject shootPoint;
-    public NavMeshAgent agent;
-    GameObject target;
+    [Header("General")]
     public float lookRadius = 5f;
 
+    [Header("Attack")]
+    public float shootCooldown;
+    public GameObject shootPoint;
+    public GameObject shootPointHandler;
+    public GameObject bulletPref;
+
+    [Header("AI")]
+    public Vector3[] points;
+
+    NavMeshAgent agent;
+    GameObject target;
+    EnemyAnimationController ac;
+    Vector3 lastPoint;
+    float shootStarted;
+    int currentPoint = 0;
+    bool checkedPoint;
+
+    //default methods
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        
+        ac = GetComponent<EnemyAnimationController>();
     }
     private void Update()
     {
-        //target = GameController.Instance().hero.transform.position;
-        if (target != null) {
-            RaycastHit2D hit;
-            hit = Physics2D.Raycast(transform.position, target.transform.position, lookRadius);
-            if (hit.collider.gameObject == target)
+        if(target != null)
+        {
+            print("shoot");
+            Shoot();
+        }
+        else if(!checkedPoint)
+        {
+            print("checked point");
+            agent.SetDestination(lastPoint);
+            if (Vector2.Distance(transform.position, lastPoint) < 0.2f) checkedPoint = true;
+        }
+        else
+        {
+            if (Vector2.Distance(transform.position, points[currentPoint]) < 1f) GetRandomPoint();
+            else
             {
-                print("ПИФ-ПАФ");
-                Shoot(target.transform.position);
+                agent.SetDestination(points[currentPoint]);
+                print(Vector2.Distance(transform.position, points[currentPoint]));
             }
         }
     }
-    private void Shoot(Vector2 destination) {
-        GameObject b = GameObject.Instantiate(bullet, shootPoint.transform);
-        b.GetComponent<Rigidbody2D>().AddRelativeForce(destination * 10f, ForceMode2D.Impulse);
-    }
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        print("А Я ВСЁ ДУМАЛ, КОГДА ЖЕ ТЫ ПОЯВИШЬСЯ");
-        if (collision.gameObject.GetComponent<HP>().race == HP.Race.Hero)
+        if (collision.GetComponent<HP>().race == HP.Race.Hero)
         {
-            target = collision.gameObject;
-            agent.SetDestination(target.transform.position);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, collision.transform.position - transform.position);
+            if(hit.collider.tag == "Player")
+            {
+                target = collision.gameObject;
+                print("can see player");
+            }
+            print(hit.collider.gameObject.name);
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
-        print("ТЫ КУДА?!");
-        if (collision.gameObject.GetComponent<HP>().race == HP.Race.Hero)
+        if (collision.gameObject == target)
         {
+            print("cant see player");
+            lastPoint = target.transform.position;
             target = null;
-            Vector2 lastSeen = collision.transform.position;
-            agent.SetDestination(lastSeen);
+            checkedPoint = false;
         }
+    }
+
+    //public methods
+
+    //private methods
+    private void Shoot()
+    {
+
+        if(Time.time >= shootCooldown + shootStarted)
+        {
+            print("fire2");
+            Quaternion rotation = Quaternion.LookRotation(target.transform.position - transform.position, transform.TransformDirection(Vector3.up));
+            shootPointHandler.transform.rotation = new Quaternion(0, 0, rotation.z, rotation.w);
+            Instantiate(bulletPref, shootPoint.transform.position, Quaternion.identity);
+            shootStarted = Time.time;
+            ac.ChangeState(EnemyAnimationController.State.Attack, 1);
+        }
+    }
+    private void GetRandomPoint()
+    {
+        print("random point");
+        List<Vector3> allPoints = new List<Vector3>();
+        for (int i = 0; i < points.Length; i++) if (i != currentPoint) allPoints.Add(points[i]);
+        currentPoint = Random.Range(0, allPoints.Count); 
     }
 }

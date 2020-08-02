@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float lifeSpan = 2f;
-    // Update is called once per frame
-    void Update()
+    Rigidbody2D rb;
+    public float lifeTime = 2f;
+    //bool deflected;
+
+    private void Start()
     {
-        lifeSpan -= Time.deltaTime;
-        if (lifeSpan <= 0f) Destroy(gameObject);
+        rb = GetComponent<Rigidbody2D>();
     }
-    private void OnCollisionEnter(Collision collision)
+    private void Update()
     {
-        
+        lifeTime -= Time.deltaTime;
+        if (lifeTime <= 0f) Destroy(gameObject);
+    }
+    private void FixedUpdate()
+    {
+        rb.MovePosition(transform.position + transform.up * Time.fixedDeltaTime);
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<HP>()) collision.gameObject.GetComponent<HP>().TakeDamage(1);
     }
 }

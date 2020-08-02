@@ -40,9 +40,9 @@ public class HeroControl : MonoBehaviour
     //private methods
     private void Slash()
     {
-        //if (Time.time < slashStarted + slashCooldown) return;
+        if (Time.time < slashStarted + slashCooldown) return;
 
-        ac.ChangeState(AnimationController.State.Slash, 0.5f);
+        ac.ChangeState(AnimationController.State.Attack, 0.5f);
         Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
         Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
         float angle = Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg; ;
