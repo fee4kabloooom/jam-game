@@ -14,4 +14,5 @@ public class GameController : MonoBehaviour
     #endregion
 
     public GameObject hero;
+    public List<GameObject> allies = new List<GameObject>();
 }

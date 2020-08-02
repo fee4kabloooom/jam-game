@@ -10,14 +10,15 @@ public class EnemyController : MonoBehaviour
     public NavMeshAgent agent;
     Vector2 target;
     public float lookRadius = 5f;
-    void Start()
+
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         
     }
-    void Update()
+    private void Update()
     {
         target = GameController.Instance().hero.transform.position;
         float distance = Vector2.Distance(target, transform.position);
@@ -35,7 +36,7 @@ public class EnemyController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position,lookRadius);
     }
-    void Shoot(Vector2 destination) {
+    private void Shoot(Vector2 destination) {
         GameObject b = GameObject.Instantiate(bullet, shootPoint.transform);
         b.GetComponent<Rigidbody2D>().AddForce(destination * 10f, ForceMode2D.Impulse);
     }
