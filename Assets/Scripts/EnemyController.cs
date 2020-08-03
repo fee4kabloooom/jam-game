@@ -45,21 +45,24 @@ public class EnemyController : MonoBehaviour
             if (type == Type.Range)
             {
                 print("shoot");
+                agent.enabled = false;
                 Shoot();
             }
             if (type == Type.Meele) {
                 print("А Я ВСЁ ДУМАЛ, КОГДА ЖЕ ТЫ ПОЯВИШЬСЯ! ПЛЮС МОРА-А-А-АЛЬ");
-                Dash();
+                Punch();
             }
         }
         else if(!checkedPoint)
         {
+            agent.enabled = true;
             print("checked point");
             agent.SetDestination(lastPoint);
             if (Vector2.Distance(transform.position, lastPoint) < 0.2f) checkedPoint = true;
         }
         else
         {
+            agent.enabled = true;
             if (Vector2.Distance(transform.position, points[currentPoint]) < 1f) GetRandomPoint();
             else
             {
@@ -110,13 +113,13 @@ public class EnemyController : MonoBehaviour
             ac.ChangeState(EnemyAnimationController.State.Attack, 1);
         }
     }
-    private void Dash() {
-        if (target != null) {
-            agent.SetDestination(target.transform.position);
-            if (Vector2.Distance(transform.position, target.transform.position) <= agent.stoppingDistance && Time.time >= shootCooldown + shootStarted) {
-                Instantiate(meeleZone, shootPoint.transform.position, Quaternion.identity);
-                shootStarted = Time.time;
-            }
+    private void Punch() {
+        agent.SetDestination(target.transform.position);
+        if (Vector2.Distance(transform.position, target.transform.position) <= 1.5f && Time.time >= shootCooldown + shootStarted)
+        {
+            ac.ChangeState(EnemyAnimationController.State.Attack, 1.5f);
+            Instantiate(meeleZone, shootPoint.transform.position, Quaternion.identity);
+            shootStarted = Time.time;
         }
     }
     private void GetRandomPoint()

@@ -46,7 +46,6 @@ public class EnemyAnimationController : MonoBehaviour
     //private methods
     private void ChangeAnimation()
     {
-        if (!canChangeState) return;
         Vector2 deltaPos = agent.velocity;
         if (deltaPos != Vector2.zero)
         {
