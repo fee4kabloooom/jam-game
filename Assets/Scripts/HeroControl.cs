@@ -45,7 +45,7 @@ public class HeroControl : MonoBehaviour
         ac.ChangeState(AnimationController.State.Attack, 0.5f);
         Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
         Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
-        float angle = Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg; ;
+        float angle = Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg;
         slash.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
 
         slashStarted = Time.time;

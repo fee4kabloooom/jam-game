@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
     Rigidbody2D rb;
     public float lifeTime = 2f;
+    float bulletSpeed = 5f;
     //bool deflected;
 
     private void Start()
@@ -19,7 +20,7 @@ public class Bullet : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.MovePosition(transform.position + transform.up * Time.fixedDeltaTime);
+        rb.MovePosition(transform.position + transform.right * bulletSpeed * Time.fixedDeltaTime); // какого чёрта не работает transform.forward?
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
